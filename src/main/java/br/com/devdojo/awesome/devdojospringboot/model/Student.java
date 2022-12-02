@@ -9,10 +9,10 @@ import jakarta.validation.constraints.NotEmpty;
 @Table(name="tb_student")
 public class Student extends AbstractEntity {
     @Column(name = "name")
-    @NotEmpty
+    @NotEmpty(message = "Name cannot be empty")
     private String name;
 
-    @NotEmpty
+    @NotEmpty(message = "Email cannot be empty")
     @Email
     private String email;
 

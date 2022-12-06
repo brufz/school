@@ -3,15 +3,18 @@ package br.com.devdojo.awesome.devdojospringboot.controller;
 import br.com.devdojo.awesome.devdojospringboot.error.ResourceNotFoundException;
 import br.com.devdojo.awesome.devdojospringboot.model.Student;
 import br.com.devdojo.awesome.devdojospringboot.repository.StudentRepository;
-import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import javax.transaction.Transactional;
+import javax.validation.Valid;
 
 
 @RestController
@@ -28,7 +31,9 @@ public class StudentController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getStudentById(@PathVariable("id") Long id){
+    public ResponseEntity<?> getStudentById(@PathVariable("id") Long id,
+                                            @AuthenticationPrincipal UserDetails userDetails){
+        System.out.println(userDetails);
         verifyIfStudentExist(id);
         return new ResponseEntity<>(studentDAO.findById(id), HttpStatus.OK);
 

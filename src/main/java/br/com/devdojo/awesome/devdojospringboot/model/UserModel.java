@@ -8,21 +8,29 @@ import javax.validation.constraints.NotEmpty;
 @Entity
 @Table(name="tb_user")
 public class UserModel extends AbstractEntity{
-    @NotEmpty
+    @NotEmpty(message = "Login cannot be empty")
     @Column(unique = true)
-    private String username;
-    @NotEmpty
+    private String login;
+    @NotEmpty(message = "password cannot be empty")
     private String password;
-
     @Column
     private boolean admin;
 
-    public String getUsername() {
-        return username;
+    public UserModel() {
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public UserModel(String login, String password, boolean admin) {
+        this.login = login;
+        this.password = password;
+        this.admin = admin;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
     }
 
     public String getPassword() {
@@ -33,11 +41,11 @@ public class UserModel extends AbstractEntity{
         this.password = password;
     }
 
-    public boolean admin() {
+    public boolean isAdmin() {
         return admin;
     }
 
     public void setAdmin(boolean admin) {
-        admin = admin;
+        this.admin = admin;
     }
 }

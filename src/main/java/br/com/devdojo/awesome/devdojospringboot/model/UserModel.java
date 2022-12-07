@@ -48,4 +48,48 @@ public class UserModel extends AbstractEntity{
     public void setAdmin(boolean admin) {
         this.admin = admin;
     }
+
+
+    public static final class UserModelBuilder {
+        private Long id;
+        private @NotEmpty(message = "Login cannot be empty") String login;
+        private @NotEmpty(message = "password cannot be empty") String password;
+        private boolean admin;
+
+        private UserModelBuilder() {
+        }
+
+        public static UserModelBuilder newBuilder() {
+            return new UserModelBuilder();
+        }
+
+        public UserModelBuilder id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public UserModelBuilder login(String login) {
+            this.login = login;
+            return this;
+        }
+
+        public UserModelBuilder password(String password) {
+            this.password = password;
+            return this;
+        }
+
+        public UserModelBuilder admin(boolean admin) {
+            this.admin = admin;
+            return this;
+        }
+
+        public UserModel build() {
+            UserModel userModel = new UserModel();
+            userModel.setId(id);
+            userModel.setLogin(login);
+            userModel.setPassword(password);
+            userModel.setAdmin(admin);
+            return userModel;
+        }
+    }
 }

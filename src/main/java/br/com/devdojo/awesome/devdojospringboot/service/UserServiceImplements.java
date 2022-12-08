@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 @Service
 public class UserServiceImplements implements UserDetailsService {
@@ -23,6 +24,20 @@ public class UserServiceImplements implements UserDetailsService {
     @Transactional
     public UserModel saveUser(UserModel user){
         return userRepository.save(user);
+    }
+
+    @Transactional
+    public List<UserModel> findAllUsers(){
+        return userRepository.findAll();
+    }
+
+    public UserDetails authentication(UserModel user){
+        UserDetails userDetails = loadUserByUsername(user.getLogin());
+        boolean matches = encoder.matches(user.getPassword(), userDetails.getPassword());
+        if(matches){
+            return userDetails;
+        }
+        throw new RuntimeException("Password is invalid");
     }
 
     @Override

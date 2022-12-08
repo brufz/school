@@ -1,5 +1,7 @@
 package br.com.devdojo.awesome.devdojospringboot.config;
 
+import br.com.devdojo.awesome.devdojospringboot.security.jwt.JwtAuthFilter;
+import br.com.devdojo.awesome.devdojospringboot.service.JwtService;
 import br.com.devdojo.awesome.devdojospringboot.service.UserServiceImplements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -10,20 +12,31 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     @Lazy
     private UserServiceImplements userService;
 
+    @Autowired
+    private JwtService jwtService;
+
+
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public OncePerRequestFilter jwtFilter(){
+        return new JwtAuthFilter(userService, jwtService);
     }
 
     @Override
@@ -38,10 +51,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                    .antMatchers(HttpMethod.POST,"/user").permitAll()
+                    .antMatchers(HttpMethod.POST,"/user/**").permitAll()
+                    .antMatchers(HttpMethod.DELETE, "/student/**").hasRole("ADMIN")
                     .anyRequest().authenticated()
                 .and()
-                    .httpBasic()
+                    .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class)
         ;
     }
 }

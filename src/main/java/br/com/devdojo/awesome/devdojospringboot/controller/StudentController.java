@@ -53,7 +53,6 @@ public class StudentController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteStudent(@PathVariable Long id){
         verifyIfStudentExist(id);
         studentDAO.deleteById(id);

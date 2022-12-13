@@ -1,5 +1,6 @@
 package br.com.devdojo.awesome.devdojospringboot.service;
 
+import br.com.devdojo.awesome.devdojospringboot.error.PasswordIncorretException;
 import br.com.devdojo.awesome.devdojospringboot.model.UserModel;
 import br.com.devdojo.awesome.devdojospringboot.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,7 @@ public class UserServiceImplements implements UserDetailsService {
         if(matches){
             return userDetails;
         }
-        throw new RuntimeException("Password is invalid");
+        throw new PasswordIncorretException("Password is invalid");
     }
 
     @Override

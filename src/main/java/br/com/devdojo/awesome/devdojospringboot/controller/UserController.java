@@ -2,6 +2,7 @@ package br.com.devdojo.awesome.devdojospringboot.controller;
 
 import br.com.devdojo.awesome.devdojospringboot.dto.CredentialsDTO;
 import br.com.devdojo.awesome.devdojospringboot.dto.TokenDTO;
+import br.com.devdojo.awesome.devdojospringboot.error.PasswordIncorretException;
 import br.com.devdojo.awesome.devdojospringboot.model.UserModel;
 import br.com.devdojo.awesome.devdojospringboot.service.JwtService;
 import br.com.devdojo.awesome.devdojospringboot.service.UserServiceImplements;
@@ -57,9 +58,9 @@ public class UserController {
             String token = jwtService.createToken(userBuild);
             return new TokenDTO(userBuild.getLogin(), token);
         }catch (UsernameNotFoundException e){
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
-        } catch (RuntimeException e){
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
+            throw new UsernameNotFoundException("Username not found");
+        } catch (PasswordIncorretException e){
+            throw new PasswordIncorretException("Password is incorect");
         }
     }
 }

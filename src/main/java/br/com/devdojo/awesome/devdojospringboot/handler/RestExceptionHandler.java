@@ -1,13 +1,12 @@
 package br.com.devdojo.awesome.devdojospringboot.handler;
 
-import br.com.devdojo.awesome.devdojospringboot.error.ErrorDetails;
-import br.com.devdojo.awesome.devdojospringboot.error.ResourceNotFoundDetails;
-import br.com.devdojo.awesome.devdojospringboot.error.ResourceNotFoundException;
-import br.com.devdojo.awesome.devdojospringboot.error.ValidationErrorDetails;
+import br.com.devdojo.awesome.devdojospringboot.error.*;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -35,6 +34,50 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                 .build();
         return new ResponseEntity<>(resourceNotFound, HttpStatus.NOT_FOUND);
 
+    }
+
+    @ExceptionHandler(PasswordIncorretException.class)
+    public ResponseEntity<?> handlePasswordIncorectException(PasswordIncorretException incoret){
+        ResourceNotFoundDetails resourceNotFoundDetails = ResourceNotFoundDetails
+                .ResourceNotFoundDetailsBuilder
+                .newBuilder()
+                .timestamp(new Date().getTime())
+                .status(HttpStatus.FORBIDDEN.value())
+                .title("Password is incorect")
+                .details(incoret.getMessage())
+                .developerMessage(incoret.getClass().getName())
+                .build();
+
+        return new ResponseEntity<>(resourceNotFoundDetails, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<?> handleUsernameNotFoundException(UsernameNotFoundException usernameNotFound){
+        ResourceNotFoundDetails resourceNotFoundDetails = ResourceNotFoundDetails
+                .ResourceNotFoundDetailsBuilder
+                .newBuilder()
+                .timestamp(new Date().getTime())
+                .status(HttpStatus.FORBIDDEN.value())
+                .title("Username not found")
+                .details(usernameNotFound.getMessage())
+                .developerMessage(usernameNotFound.getClass().getName())
+                .build();
+        return new ResponseEntity<>(resourceNotFoundDetails, HttpStatus.FORBIDDEN);
+    }
+
+
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ResponseEntity<?> handleExpiredJwtException(ExpiredJwtException expired){
+        ResourceNotFoundDetails resourceNotFoundDetails = ResourceNotFoundDetails
+                .ResourceNotFoundDetailsBuilder
+                .newBuilder()
+                .timestamp(new Date().getTime())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .title("Token is expired")
+                .details(expired.getMessage())
+                .developerMessage(expired.getClass().getName())
+                .build();
+        return new ResponseEntity<>(resourceNotFoundDetails, HttpStatus.BAD_REQUEST);
     }
 
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
